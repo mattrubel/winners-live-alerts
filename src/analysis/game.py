@@ -24,6 +24,14 @@ class Game:
         else:
             raise RuntimeError("Invalid market_key")
 
+    def execute_analyses(self) -> dict:
+        results = {
+            "h2h_arb": self.head_to_heads.direct_arbitrage(),
+            "h2h_price_diff": self.head_to_heads.price_differences(0.25)
+        }
+
+        return results
+
     def add_total(self, book_name, outcomes):
         over_total = None
         over_price = None
@@ -31,12 +39,14 @@ class Game:
         under_price = None
 
         for outcome in outcomes:
-            if outcome.name == "Over":
-                over_total = outcome.point
-                over_price = outcome.price
-            elif outcome.name == "Under":
-                under_total = outcome.point
-                under_price = outcome.price
+            if outcome['name'] == "Over":
+                over_total = outcome['point']
+                over_price = outcome['price']
+            elif outcome['name'] == "Under":
+                under_total = outcome['point']
+                under_price = outcome['price']
+            else:
+                raise RuntimeError("Invalid outcome name")
 
         assert over_total is not None
         assert over_price is not None
@@ -49,10 +59,12 @@ class Game:
         home_price = None
         away_price = None
         for outcome in outcomes:
-            if outcome.name == self.home_team:
-                home_price = outcome.price
-            elif outcome.name == self.away_team:
-                away_price = outcome.price
+            if outcome['name'] == self.home_team:
+                home_price = outcome['price']
+            elif outcome['name'] == self.away_team:
+                away_price = outcome['price']
+            else:
+                raise RuntimeError("Outcome doesn't match home or away team")
 
         assert home_price is not None
         assert away_price is not None
@@ -66,12 +78,14 @@ class Game:
         away_price = None
 
         for outcome in outcomes:
-            if outcome.name == self.home_team:
-                home_spread = outcome.point
-                home_price = outcome.price
-            elif outcome.name == self.away_team:
-                away_spread = outcome.point
-                away_price = outcome.price
+            if outcome['name'] == self.home_team:
+                home_spread = outcome['point']
+                home_price = outcome['price']
+            elif outcome['name'] == self.away_team:
+                away_spread = outcome['point']
+                away_price = outcome['price']
+            else:
+                raise RuntimeError("Invalid Outcome")
 
         assert home_price is not None
         assert home_spread is not None
