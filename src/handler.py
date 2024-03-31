@@ -8,6 +8,9 @@ from src.analysis.game import Game
 def event_handler(event: dict, ctx=None):
     game_list = get_s3_file(event['s3_path'])
     games = load_games(game_list)
+    print(len(games))
+    if len(games) == 0:
+        print("No games that haven't started yet.")
     reportable_events = analyze_games(games)
 
     if len(reportable_events) > 0:
@@ -36,17 +39,24 @@ def load_games(game_list: list) -> list:
         )
 
         books = game_dict['bookmakers']
-
+        added_market = False
         for book in books:
 
+            # only want games that haven't been updated before commence time
+            if book['last_update'] > game.commence_time:
+                continue
+
             for market in book['markets']:
+                added_market = True
                 game.add_market(
                     book['key'],
                     market['key'],
                     market['outcomes']
                 )
 
-        games.append(game)
+        # ensure not adding game where no valid markets exist
+        if added_market:
+            games.append(game)
 
     return games
 
@@ -55,20 +65,20 @@ def analyze_games(games: list) -> list:
     reportable_events = []
 
     for game in games:
-        analyses = game.execute_analyses()
+        game_id, analyses = game.execute_analyses()
 
         for key in analyses.keys():
             if analyses[key]:
-                reportable_events.append(key)
+                reportable_events.append((game_id, key, analyses[key]))
 
     return reportable_events
 
 
-def send_reports(events: list):
+def send_reports(reports: list):
     # will eventually host SNS logic
     print("Reportable game ids:")
-    for event in events:
-        print(event)
+    for report in reports:
+        print(report)
 
 
 def parse_args() -> dict:

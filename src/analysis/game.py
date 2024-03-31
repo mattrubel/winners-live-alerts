@@ -24,13 +24,13 @@ class Game:
         else:
             raise RuntimeError("Invalid market_key")
 
-    def execute_analyses(self) -> dict:
+    def execute_analyses(self) -> (str, dict):
         results = {
             "h2h_arb": self.head_to_heads.direct_arbitrage(),
             "h2h_price_diff": self.head_to_heads.price_differences(0.25)
         }
 
-        return results
+        return self.game_id, results
 
     def add_total(self, book_name, outcomes):
         over_total = None
