@@ -16,8 +16,16 @@ class HeadToHeads:
 
         return False
 
-    def direct_arbitrage(self):
-        max_home_implied = 1 / max(self.home_prices)
-        max_away_implied = 1 / max(self.away_prices)
+    def direct_arbitrage(self) -> [None, tuple]:
+        max_home_price = max(self.home_prices)
+        max_away_price = max(self.away_prices)
+        max_home_implied = 1 / max_home_price
+        max_away_implied = 1 / max_away_price
 
-        return max_away_implied + max_home_implied < 1
+        if max_away_implied + max_home_implied < 1:
+            away_book = self.books[self.away_prices.index(max_away_price)]
+            home_book = self.books[self.home_prices.index(max_home_price)]
+
+            return home_book, away_book
+
+        return None
