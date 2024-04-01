@@ -28,20 +28,23 @@ class TestHeadToHeads:
 
         assert obj.direct_arbitrage() is None
 
-    def test_price_difference_true(self):
+    def test_price_difference_exists(self):
         obj = HeadToHeads()
 
         obj.add_h2h(1.91, 1.91, "book1")
         obj.add_h2h(1.82, 2.0, "book2")
         obj.add_h2h(1.71, 2.3, "book3")
 
-        assert obj.price_differences(0.25)
+        price_diff = obj.price_differences(0.25)
+        assert price_diff is not None
+        assert price_diff[0] == "book1"
+        assert price_diff[1] == "book3"
 
-    def test_price_difference_false(self):
+    def test_price_difference_None(self):
         obj = HeadToHeads()
 
         obj.add_h2h(1.91, 1.91, "book1")
         obj.add_h2h(1.91, 1.91, "book2")
         obj.add_h2h(1.91, 1.91, "book3")
 
-        assert not obj.price_differences(0.25)
+        assert obj.price_differences(0.25) is None

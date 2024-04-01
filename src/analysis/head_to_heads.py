@@ -10,11 +10,24 @@ class HeadToHeads:
         self.away_prices.append(away_price)
         self.books.append(book)
 
-    def price_differences(self, price_difference: float):
-        if abs(max(self.home_prices) - max(self.away_prices)) >= price_difference:
-            return True
+    def price_differences(self, price_difference: float) -> [dict, None]:
+        max_home_price = max(self.home_prices)
+        max_away_price = max(self.away_prices)
 
-        return False
+        min_home_price = min(self.home_prices)
+        min_away_price = min(self.away_prices)
+
+        if max_home_price - min_home_price >= price_difference:
+            min_book = self.books[self.home_prices.index(min_home_price)]
+            max_book = self.books[self.home_prices.index(max_home_price)]
+            return min_book, max_book
+
+        if max_away_price - min_away_price >= price_difference:
+            min_book = self.books[self.away_prices.index(min_away_price)]
+            max_book = self.books[self.away_prices.index(max_away_price)]
+            return min_book, max_book
+
+        return None
 
     def direct_arbitrage(self) -> [None, tuple]:
         max_home_price = max(self.home_prices)
