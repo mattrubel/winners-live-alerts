@@ -160,3 +160,5 @@ cython_debug/
 .idea/
 
 .terraform
+
+infra/live/main/serverless-execution/builds/
