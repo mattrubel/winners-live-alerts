@@ -160,5 +160,6 @@ cython_debug/
 .idea/
 
 .terraform
+.terraform.lock.hcl
 
 infra/live/main/serverless-execution/builds/

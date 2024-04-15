@@ -3,7 +3,7 @@ module "lambda" {
 
   function_name = "serverless-execution-function"
   description   = "Serverless Execution Function"
-  handler       = "src.handler.event_handler"
+  handler       = "handler.event_handler"
   runtime       = "python3.11"
 
   timeout = 60

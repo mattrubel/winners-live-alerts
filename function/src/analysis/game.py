@@ -1,6 +1,6 @@
-from src.analysis.head_to_heads import HeadToHeads
-from src.analysis.spreads import Spreads
-from src.analysis.totals import Totals
+from function.src.analysis.head_to_heads import HeadToHeads
+from function.src.analysis.spreads import Spreads
+from function.src.analysis.totals import Totals
 
 
 class Game:
