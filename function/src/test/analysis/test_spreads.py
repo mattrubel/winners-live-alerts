@@ -1,4 +1,4 @@
-from function.src.analysis.spreads import Spreads
+from src.analysis.spreads import Spreads
 
 
 class TestSpreads:

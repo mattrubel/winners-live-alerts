@@ -1,4 +1,4 @@
-from function.src.analysis.head_to_heads import HeadToHeads
+from src.analysis.head_to_heads import HeadToHeads
 
 
 class TestHeadToHeads:

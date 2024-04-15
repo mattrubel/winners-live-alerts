@@ -1,4 +1,4 @@
-from function.src.analysis.totals import Totals
+from src.analysis.totals import Totals
 
 
 class TestTotals:

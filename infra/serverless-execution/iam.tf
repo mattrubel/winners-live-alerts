@@ -32,6 +32,13 @@ resource "aws_iam_policy" "serverless_execution_policy" {
         "logs:PutLogEvents"
       ],
       "Resource": "arn:aws:logs:*:*:*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetObject"
+      ],
+      "Resource": "arn:aws:s3:::winners-v2-data/*"
     }
   ]
 }
