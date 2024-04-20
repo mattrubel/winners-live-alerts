@@ -1,7 +1,6 @@
 import argparse
 import boto3
 import json
-
 from src.analysis.game import Game
 
 
