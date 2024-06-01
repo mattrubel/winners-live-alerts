@@ -2,10 +2,18 @@ import argparse
 import boto3
 import json
 from src.analysis.game import Game
+from src.alerts.alert import Alert
 
 
 def event_handler(event: dict, ctx=None):
-    game_list = get_s3_file(event['s3_path'])
+    print(event)
+    bucket = event['Records'][0]['s3']['bucket']['name']
+    key = event['Records'][0]['s3']['object']['key']
+
+    print(bucket)
+    print(key)
+
+    game_list = get_s3_file(bucket, key)
     games = load_games(game_list)
     print(len(games))
     if len(games) == 0:
@@ -16,10 +24,9 @@ def event_handler(event: dict, ctx=None):
         send_reports(reportable_events)
 
 
-def get_s3_file(s3_path: str) -> list:
+def get_s3_file(bucket: str, key: str) -> list:
     s3 = boto3.client('s3')
-    split_path = s3_path.split("/", 3)
-    response = s3.get_object(Bucket=split_path[2], Key=split_path[3])
+    response = s3.get_object(Bucket=bucket, Key=key)
     json_content = response['Body'].read().decode('utf-8')
 
     # Parse the JSON content into a dictionary
@@ -76,8 +83,19 @@ def analyze_games(games: list) -> list:
 def send_reports(reports: list):
     # will eventually host SNS logic
     print("Reportable game ids:")
+    reports_to_send = []
     for report in reports:
-        print(report)
+        if 'arb' in report[1]:
+            report_msg = f"game_id: {report[0]}, type {report[1]}, book1 {report[2][0]}, book2: {report[2][1]}"
+            reports_to_send.append(
+                report_msg
+            )
+
+    final_message = "\n".join(reports_to_send)
+
+    alert = Alert("arn:aws:sns:us-east-1:597426459950:winners-alerts-topic")
+
+    alert.send_notification("Report", final_message)
 
 
 def parse_args() -> dict:
@@ -92,7 +110,24 @@ def parse_args() -> dict:
 if __name__ == "__main__":
     args_ = parse_args()
     s3_path_ = args_['s3_path']
+
+    bucket = s3_path_.split("/")[2]
+    path = "/".join(s3_path_.split("/")[3:])
+    print(bucket)
+    print(path)
+
     event_ = {
-        "s3_path": s3_path_
+        "Records": [
+            {
+                's3': {
+                    'bucket': {
+                        "name": bucket
+                    },
+                    'object': {
+                        "key": path
+                    }
+                }
+            }
+        ]
     }
     event_handler(event_)
