@@ -39,6 +39,13 @@ resource "aws_iam_policy" "serverless_execution_policy" {
         "s3:GetObject"
       ],
       "Resource": "arn:aws:s3:::winners-v2-data/*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "SNS:Publish"
+      ],
+      "Resource": "arn:aws:sns:us-east-1:597426459950:winners-alerts-topic"
     }
   ]
 }
